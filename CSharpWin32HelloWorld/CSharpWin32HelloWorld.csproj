@@ -75,6 +75,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automation.cs" />
+    <Compile Include="IRawElementProviderFragment.cs" />
+    <Compile Include="IRawElementProviderFragmentRoot.cs" />
+    <Compile Include="IRawElementProviderSimple.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Avalonia.Win32.Interop.Automation;
 using PInvoke;
 using static PInvoke.User32;
 
@@ -61,9 +62,16 @@ namespace CSharpWin32HelloWorld
                 case WindowMessage.WM_DESTROY:
                     PostQuitMessage(0);
                     return IntPtr.Zero;
+                case WindowMessage.WM_GETOBJECT:
+                    var p = new WindowProvider(hwnd);
+                    var r = UiaReturnRawElementProvider(hwnd, new IntPtr(wParam), new IntPtr(lParam), p);
+                    return r;
             }
 
             return DefWindowProc(hwnd, msg, new IntPtr(wParam), new IntPtr(lParam));
         }
+
+        [DllImport("UIAutomationCore.dll", EntryPoint = "UiaReturnRawElementProvider", CharSet = CharSet.Unicode)]
+        public static extern IntPtr UiaReturnRawElementProvider(IntPtr hwnd, IntPtr wParam, IntPtr lParam, IRawElementProviderSimple el);
     }
 }
