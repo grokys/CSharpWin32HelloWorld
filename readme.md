@@ -15,4 +15,4 @@ Doesn't work when using interface defined in assembly:
 
 - Remove the `WPF` conditional compilation symbol
 - Run the program
-- `WindowProvider.Navigate` will be called (which throws to make sure you notice)
+- `WindowProvider.Navigate` will not be called
