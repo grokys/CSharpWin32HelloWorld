@@ -64,14 +64,11 @@ namespace CSharpWin32HelloWorld
                     return IntPtr.Zero;
                 case WindowMessage.WM_GETOBJECT:
                     var p = new WindowProvider(hwnd);
-                    var r = UiaReturnRawElementProvider(hwnd, new IntPtr(wParam), new IntPtr(lParam), p);
+                    var r = WindowProvider.UiaReturnRawElementProvider(hwnd, new IntPtr(wParam), new IntPtr(lParam), p);
                     return r;
             }
 
             return DefWindowProc(hwnd, msg, new IntPtr(wParam), new IntPtr(lParam));
         }
-
-        [DllImport("UIAutomationCore.dll", EntryPoint = "UiaReturnRawElementProvider", CharSet = CharSet.Unicode)]
-        public static extern IntPtr UiaReturnRawElementProvider(IntPtr hwnd, IntPtr wParam, IntPtr lParam, IRawElementProviderSimple el);
     }
 }

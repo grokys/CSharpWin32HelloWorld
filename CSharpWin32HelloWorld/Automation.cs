@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+
+#if WPF
+using System.Windows.Automation.Provider;
+#else
 using Avalonia.Win32.Interop.Automation;
+#endif
 
 namespace CSharpWin32HelloWorld
 {
@@ -18,14 +20,16 @@ namespace CSharpWin32HelloWorld
             System.Diagnostics.Debug.WriteLine("Created WindowProvider");
         }
 
+        public Rect BoundingRectangle => default;
+        public IRawElementProviderFragmentRoot FragmentRoot => this;
         public ProviderOptions ProviderOptions => ProviderOptions.ServerSideProvider;
 
         [return: MarshalAs(UnmanagedType.IUnknown)]
-        public virtual object GetPatternProvider(UiaPatternId patternId) => null;
+        public virtual object GetPatternProvider(int patternId) => null;
 
-        public virtual object GetPropertyValue(UiaPropertyId propertyId)
+        public virtual object GetPropertyValue(int propertyId)
         {
-            if (propertyId == UiaPropertyId.Name)
+            if (propertyId == 30005)
             {
                 System.Diagnostics.Debug.WriteLine("Get Name property");
                 return "Mic check 12";
@@ -34,9 +38,6 @@ namespace CSharpWin32HelloWorld
             return null;
         }
          
-        public Rect BoundingRectangle => default;
-
-
         public IRawElementProviderSimple[] GetEmbeddedFragmentRoots() => null;
 
         public int[] GetRuntimeId()
@@ -54,7 +55,6 @@ namespace CSharpWin32HelloWorld
             throw new NotImplementedException();
         }
 
-        public IRawElementProviderFragmentRoot FragmentRoot => this;
         public IRawElementProviderFragment ElementProviderFromPoint(double x, double y) => null;
         public IRawElementProviderFragment GetFocus() => null;
 
@@ -67,6 +67,9 @@ namespace CSharpWin32HelloWorld
                 return result;
             }
         }
+
+        [DllImport("UIAutomationCore.dll", EntryPoint = "UiaReturnRawElementProvider", CharSet = CharSet.Unicode)]
+        public static extern IntPtr UiaReturnRawElementProvider(IntPtr hwnd, IntPtr wParam, IntPtr lParam, IRawElementProviderSimple el);
 
         [DllImport("UIAutomationCore.dll", EntryPoint = "UiaHostProviderFromHwnd", CharSet = CharSet.Unicode)]
         public static extern int UiaHostProviderFromHwnd(IntPtr hwnd, [MarshalAs(UnmanagedType.Interface)] out IRawElementProviderSimple provider);
