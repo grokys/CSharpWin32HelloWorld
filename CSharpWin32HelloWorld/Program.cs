@@ -9,7 +9,24 @@ namespace CSharpWin32HelloWorld
     {
         static int Main(string[] args)
         {
-            const string ClassName = "CSharpWin32HelloWorld";
+
+            Show();
+
+            var msg = new MSG();
+            while (GetMessage(&msg, IntPtr.Zero, 0, 0) != 0)
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+
+            return 0;
+        }
+
+        private static int _index;
+
+        private static IntPtr Show()
+        {
+            string ClassName = "CSharpWin32HelloWorld" + _index++;
             var hinstance = Marshal.GetHINSTANCE(typeof(Program).Module);
             ushort atom;
 
@@ -43,23 +60,27 @@ namespace CSharpWin32HelloWorld
                 throw new Win32Exception();
 
             ShowWindow(hwnd, WindowShowStyle.SW_SHOWDEFAULT);
-
-            var msg = new MSG();
-            while (GetMessage(&msg, IntPtr.Zero, 0, 0) != 0)
-            {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-
-            return 0;
+            return hwnd;
         }
 
         private static IntPtr WindowProc(IntPtr hwnd, WindowMessage msg, void* wParam, void* lParam)
         {
             switch (msg)
             {
+                case WindowMessage.WM_LBUTTONDOWN:
+                    if (_index == 1)
+                    {
+                        var h = Show();
+                        SetCapture(h);
+                        DestroyWindow(hwnd);
+                    }
+
+                    return IntPtr.Zero;
+                case WindowMessage.WM_MOUSEMOVE:
+                    System.Diagnostics.Debug.WriteLine("move " + Environment.TickCount);
+                    return IntPtr.Zero;
                 case WindowMessage.WM_DESTROY:
-                    PostQuitMessage(0);
+                    //PostQuitMessage(0);
                     return IntPtr.Zero;
             }
 
